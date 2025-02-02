@@ -531,7 +531,19 @@
 	\
 	BOOT_TARGET_DEVICES(BOOTENV_DEV)                                  \
 	\
-	"distro_bootcmd=" BOOTENV_SET_SCSI_NEED_INIT                      \
+	"distro_bootcmd=" \
+    "if test -e mmc 0:1 u-boot.scr; then " \
+      "echo --- Found u-boot.scr ---; " \
+      "fatload mmc 0:1 0x2000000 u-boot.scr; " \
+      "source 0x2000000; " \
+    "elif test -e mmc 0:1 soc_system.rbf; then " \
+      "echo --- Programming FPGA ---; " \
+      "fatload mmc 0:1 0x2000000 soc_system.rbf; " \
+      "fpga load 0 0x2000000 0x700000; " \
+    "else " \
+      "echo u-boot.scr and soc_system.rbf not found in fat.; " \
+    "fi; " \
+		BOOTENV_SET_SCSI_NEED_INIT                      \
 		BOOTENV_SET_NVME_NEED_INIT                                \
 		BOOTENV_SET_IDE_NEED_INIT                                 \
 		BOOTENV_SET_VIRTIO_NEED_INIT                              \
