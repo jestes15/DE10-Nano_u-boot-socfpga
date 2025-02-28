@@ -163,6 +163,7 @@
 
 #ifndef CFG_EXTRA_ENV_SETTINGS
 #define CFG_EXTRA_ENV_SETTINGS \
+	"verify=n\0" \
 	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0" \
 	"bootm_size=0xa000000\0" \
 	"kernel_addr_r="__stringify(CONFIG_SYS_LOAD_ADDR)"\0" \
