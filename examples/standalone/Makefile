@@ -4,9 +4,10 @@
 # Wolfgang Denk, DENX Software Engineering, wd@denx.de.
 
 extra-y        := hello_world
-extra-y        += de10_nano_hdmi_config
+# extra-y        += de10_nano_hdmi_config
 # extra-y        += dump_adv7513_regs
 # extra-y        += dump_adv7513_edid
+extra-y        += i2c_test
 extra-$(CONFIG_SPI_FLASH_ATMEL)    += atmel_df_pow2
 extra-$(CONFIG_PPC)                += sched
 
@@ -25,6 +26,7 @@ COBJS	:= $(ELF:=.o)
 LIB	= $(obj)/libstubs.o
 
 LIBOBJS-$(CONFIG_PPC) += ppc_longjmp.o ppc_setjmp.o
+LIBOBJS-$(CONFIG_8xx) += test_burst_lib.o
 LIBOBJS-y += stubs.o
 
 targets += $(patsubst $(obj)/%,%,$(LIB)) $(COBJS) $(LIBOBJS-y)
@@ -34,6 +36,7 @@ ELF	:= $(addprefix $(obj)/,$(ELF))
 
 # Disable LTO for these builds
 CFLAGS_REMOVE_hello_world.o := $(LTO_CFLAGS)
+CFLAGS_REMOVE_i2c_test.o := $(LTO_CFLAGS)
 CFLAGS_REMOVE_stubs.o := $(LTO_CFLAGS)
 
 # For PowerPC there's no need to compile standalone applications as a

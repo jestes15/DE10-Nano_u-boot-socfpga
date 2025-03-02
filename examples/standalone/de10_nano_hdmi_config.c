@@ -25,8 +25,13 @@
 #include <exports.h>
 #include <env.h>
 #include <api_public.h>
+#include <dm.h>
 #include <i2c.h>
 #include "de10_nano_hdmi_config.h"
+
+#ifndef CONFIG_DM_I2C
+#error "I2C Driver Model is not enabled"
+#endif
 
 /*
 This program is built to run as a u-boot standalone application and leverage the
@@ -68,6 +73,9 @@ init_config init_config_array[] = {
 /* prototypes */
 void pll_calc_fixed(struct pll_calc_struct *the_pll_calc_struct);
 void uitoa(uint32_t uint32_input, char **output_str);
+int i2c_read_l(uint8_t chip_addr, unsigned int addr, int alen, uint8_t *buffer, int len);
+int i2c_write_l(uchar chip, uint addr, int alen, uchar *buffer, int len);
+void *memcpy(void *dest, const void *src, size_t n);
 
 extern void *syscall_ptr;
 extern uint32_t search_hint;
@@ -161,10 +169,10 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
 	 */
 	env_set(HDMI_STATUS_ENV, "read ADV7513 chip ID");
 	milestones |= 0x01 << 0;
-	result = i2c_read(
+	result = i2c_read_l(
 			ADV7513_MAIN_ADDR,	// uint8_t chip
 			0x00,			// unsigned int addr
-			0,			// int alen
+			0,			// int alen (address length)
 			adv7513_read_buffer,	// uint8_t *buffer
 			ADV7513_CHIP_ID_LO + 1	// int len
 		);
@@ -218,7 +226,7 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
 	env_set(HDMI_STATUS_ENV, "force HPD true");
 	milestones |= 0x01 << 3;
 	adv7513_write_val = ADV7513_HPD_CNTL_BITS;
-	result = i2c_write(
+	result = i2c_write_l(
 			ADV7513_MAIN_ADDR,	// uint8_t chip
 			ADV7513_HPD_CNTL,	// unsigned int addr
 			1,			// int alen
@@ -243,7 +251,7 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
 	milestones |= 0x01 << 4;
 	adv7513_write_val = adv7513_read_buffer[ADV7513_PWR_DWN];
 	adv7513_write_val |= ADV7513_PWR_DWN_BIT;
-	result = i2c_write(
+	result = i2c_write_l(
 			ADV7513_MAIN_ADDR,	// uint8_t chip
 			ADV7513_PWR_DWN,	// unsigned int addr
 			1,			// int alen
@@ -267,7 +275,7 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
 	env_set(HDMI_STATUS_ENV, "power up ADV7513");
 	milestones |= 0x01 << 5;
 	adv7513_write_val &= ~ADV7513_PWR_DWN_BIT;
-	result = i2c_write(
+	result = i2c_write_l(
 			ADV7513_MAIN_ADDR,	// uint8_t chip
 			ADV7513_PWR_DWN,	// unsigned int addr
 			1,			// int alen
@@ -301,7 +309,7 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
 	env_set(HDMI_STATUS_ENV, "wait EDID ready");
 	milestones |= 0x01 << 7;
 	for(i = 0 ; i < 1000 ; i++) {
-		result = i2c_read(
+		result = i2c_read_l(
 				ADV7513_MAIN_ADDR,	// uint8_t chip
 				0x00,			// unsigned int addr
 				0,			// int alen
@@ -336,7 +344,7 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
 	/* read the EDID data */
 	env_set(HDMI_STATUS_ENV, "read EDID data");
 	milestones |= 0x01 << 8;
-	result = i2c_read(
+	result = i2c_read_l(
 			ADV7513_EDID_ADDR,	// uint8_t chip
 			0x00,			// unsigned int addr
 			0,			// int alen
@@ -830,7 +838,7 @@ post_EDID_evaluation:
 	for(i = 0 ; i < (int)(sizeof(init_config_array) / sizeof(init_config))
 			; i++) {
 
-		result = i2c_write(
+		result = i2c_write_l(
 			ADV7513_MAIN_ADDR,		// uint8_t chip
 			init_config_array[i].addr,	// unsigned int addr
 			1,				// int alen
@@ -1332,7 +1340,7 @@ void hang(void) {
 
 
 /*
-	result = i2c_write(
+	result = i2c_write_l(
 			ADV7513_MAIN_ADDR,	// uint8_t chip
 			ADV7513_HPD_CNTL,	// unsigned int addr
 			1,			// int alen
@@ -1341,11 +1349,27 @@ void hang(void) {
 		);
 
 */
-int i2c_read(uint8_t chip_addr, unsigned int addr, int alen, uint8_t *buffer, int len) {
-	struct dm_i2c_chip chip = {
-		.chip_addr = chip_addr,
-		.offset_len = addr,
-		.flags = 0,
-		.chip_addr_offset_mask = 0
-	}
+int i2c_read_l(uint8_t chip_addr, unsigned int addr, int alen, uint8_t *buffer, int len) {
+	struct udevice *bus;    // I2C controller device
+    struct udevice *dev;    // I2C chip device
+    uint8_t chip_addr = 0x50;  // Same I2C device address
+    uint8_t buffer[8];
+    unsigned int reg_addr = 0x10;
+    int ret;
+
+	ret = uclass_get_device_by_seq(UCLASS_I2C, 0, &bus);
+}
+
+int i2c_write_l(uchar chip, uint addr, int alen, uchar *buffer, int len) {
+	return 0;
+}
+
+void *memcpy(void *dest, const void *src, size_t n)
+{
+    for (size_t i = 0; i < n; i++)
+    {
+        ((char*)dest)[i] = ((char*)src)[i];
+    }
+
+	return NULL;
 }
