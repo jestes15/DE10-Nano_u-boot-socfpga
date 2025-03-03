@@ -77,11 +77,6 @@ int i2c_read_l(uint8_t chip_addr, unsigned int addr, int alen, uint8_t *buffer, 
 int i2c_write_l(uchar chip, uint addr, int alen, uchar *buffer, int len);
 void *memcpy(void *dest, const void *src, size_t n);
 
-extern void *syscall_ptr;
-extern uint32_t search_hint;
-
-int	syscall(int, int *, ...);
-
 /* main configuration function */
 int de10_nano_hdmi_config(int argc, char * const argv[]) {
 
