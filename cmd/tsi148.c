@@ -447,7 +447,7 @@ int do_tsi148(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
 
 U_BOOT_CMD(
 	tsi148,	7,	1,	do_tsi148,
-	"initialize and configure Turndra Tsi148\n",
+	"initialize and configure Tundra Tsi148\n",
 	"init\n"
 	"    - initialize tsi148\n"
 	"tsi148 vme   [vme_addr] [pci_addr] [size] [vam]\n"

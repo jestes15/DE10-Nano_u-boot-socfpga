@@ -4,7 +4,7 @@
 # Wolfgang Denk, DENX Software Engineering, wd@denx.de.
 
 extra-y        := hello_world
-# extra-y        += de10_nano_hdmi_config
+extra-y        += de10_nano_hdmi_config
 # extra-y        += dump_adv7513_regs
 # extra-y        += dump_adv7513_edid
 extra-y        += i2c_test
@@ -27,7 +27,7 @@ LIB	= $(obj)/libstubs.o
 
 LIBOBJS-$(CONFIG_PPC) += ppc_longjmp.o ppc_setjmp.o
 LIBOBJS-$(CONFIG_8xx) += test_burst_lib.o
-LIBOBJS-y += stubs.o
+LIBOBJS-y += stubs.o memcpy.o
 
 targets += $(patsubst $(obj)/%,%,$(LIB)) $(COBJS) $(LIBOBJS-y)
 

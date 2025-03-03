@@ -75,7 +75,7 @@ void pll_calc_fixed(struct pll_calc_struct *the_pll_calc_struct);
 void uitoa(uint32_t uint32_input, char **output_str);
 int i2c_read_l(uint8_t chip_addr, unsigned int addr, int alen, uint8_t *buffer, int len);
 int i2c_write_l(uchar chip, uint addr, int alen, uchar *buffer, int len);
-void *memcpy(void *dest, const void *src, size_t n);
+// void *memcpy(void *dest, const void *src, size_t n);
 
 /* main configuration function */
 int de10_nano_hdmi_config(int argc, char * const argv[]) {
@@ -1347,24 +1347,24 @@ void hang(void) {
 int i2c_read_l(uint8_t chip_addr, unsigned int addr, int alen, uint8_t *buffer, int len) {
 	struct udevice *bus;    // I2C controller device
     struct udevice *dev;    // I2C chip device
-    uint8_t chip_addr = 0x50;  // Same I2C device address
-    uint8_t buffer[8];
-    unsigned int reg_addr = 0x10;
-    int ret;
+    // uint8_t chip_addr = 0x50;  // Same I2C device address
+    // uint8_t buffer[8];
+    // unsigned int reg_addr = 0x10;
+    // int ret;
 
-	ret = uclass_get_device_by_seq(UCLASS_I2C, 0, &bus);
+	// ret = uclass_get_device_by_seq(UCLASS_I2C, 0, &bus);
 }
 
 int i2c_write_l(uchar chip, uint addr, int alen, uchar *buffer, int len) {
 	return 0;
 }
 
-void *memcpy(void *dest, const void *src, size_t n)
-{
-    for (size_t i = 0; i < n; i++)
-    {
-        ((char*)dest)[i] = ((char*)src)[i];
-    }
+// void *memcpy(void *dest, const void *src, size_t n)
+// {
+//     for (size_t i = 0; i < n; i++)
+//     {
+//         ((char*)dest)[i] = ((char*)src)[i];
+//     }
 
-	return NULL;
-}
+// 	return NULL;
+// }
