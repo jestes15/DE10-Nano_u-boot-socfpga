@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 #ifndef _DE10_NANO_HDMI_CONFIG_H_
 #define _DE10_NANO_HDMI_CONFIG_H_
 
@@ -149,6 +148,10 @@ struct pll_calc_struct {
 #define ADV7513_EDID_RDY_BIT    (0x04)
 #define ADV7513_HPD_CNTL        (0xD6)
 #define ADV7513_HPD_CNTL_BITS   (0xC0)
+
+#include <linux/types.h>
+
+typedef unsigned char u_char;
 
 typedef struct {
 	u_char addr;

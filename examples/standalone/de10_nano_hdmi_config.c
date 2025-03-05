@@ -120,8 +120,6 @@ int de10_nano_hdmi_config(int argc, char *const argv[])
     uint32_t CP_reg;
     uint32_t VCODIV_reg;
 
-    volatile struct udevice *main_addr_dev;
-    volatile struct udevice *edid_addr_dev;
     volatile uint32_t *pll_ptr;
     volatile uint32_t *fbr_ptr;
     volatile uint32_t *cvo_ptr;
@@ -133,6 +131,8 @@ int de10_nano_hdmi_config(int argc, char *const argv[])
     volatile struct bmp_24_bit_pixel *bmp_pixel_ptr;
 
     struct pll_calc_struct shared_struct;
+	struct udevice *main_addr_dev;
+    struct udevice *edid_addr_dev;
 
     char snprintf_buffer[256];
     char *snprintf_buffer_ptr;
@@ -178,14 +178,7 @@ int de10_nano_hdmi_config(int argc, char *const argv[])
     env_set(HDMI_STATUS_ENV, "read ADV7513 chip ID");
     milestones |= 0x01 << 0;
 
-#error "I2C here"
-    result = i2c_read_l(ADV7513_MAIN_ADDR,     // uint8_t chip
-                        0x00,                  // unsigned int addr
-                        0,                     // int alen (address length)
-                        adv7513_read_buffer,   // uint8_t *buffer
-                        ADV7513_CHIP_ID_LO + 1 // int len
-    );
-
+	result = dm_i2c_read(main_addr_dev, 0x00, adv7513_read_buffer, ADV7513_CHIP_ID_LO + 1);
     if (result != 0)
     {
         print_str = "reading I2C";
@@ -235,14 +228,7 @@ int de10_nano_hdmi_config(int argc, char *const argv[])
     milestones |= 0x01 << 3;
     adv7513_write_val = ADV7513_HPD_CNTL_BITS;
 
-#error "I2C here"
-    result = i2c_write_l(ADV7513_MAIN_ADDR,  // uint8_t chip
-                         ADV7513_HPD_CNTL,   // unsigned int addr
-                         1,                  // int alen
-                         &adv7513_write_val, // uint8_t *buffer
-                         1                   // int len
-    );
-
+	result = dm_i2c_write(main_addr_dev, ADV7513_HPD_CNTL, &adv7513_write_val, 1);
     if (result != 0)
     {
         print_str = "writing I2C";
@@ -262,14 +248,7 @@ int de10_nano_hdmi_config(int argc, char *const argv[])
     adv7513_write_val = adv7513_read_buffer[ADV7513_PWR_DWN];
     adv7513_write_val |= ADV7513_PWR_DWN_BIT;
 
-#error "I2C here"
-    result = i2c_write_l(ADV7513_MAIN_ADDR,  // uint8_t chip
-                         ADV7513_PWR_DWN,    // unsigned int addr
-                         1,                  // int alen
-                         &adv7513_write_val, // uint8_t *buffer
-                         1                   // int len
-    );
-
+	result = dm_i2c_write(main_addr_dev, ADV7513_PWR_DWN, &adv7513_write_val, 1);
     if (result != 0)
     {
         print_str = "writing I2C";
@@ -288,14 +267,7 @@ int de10_nano_hdmi_config(int argc, char *const argv[])
     milestones |= 0x01 << 5;
     adv7513_write_val &= ~ADV7513_PWR_DWN_BIT;
 
-#error "I2C here"
-    result = i2c_write_l(ADV7513_MAIN_ADDR,  // uint8_t chip
-                         ADV7513_PWR_DWN,    // unsigned int addr
-                         1,                  // int alen
-                         &adv7513_write_val, // uint8_t *buffer
-                         1                   // int len
-    );
-
+	result = dm_i2c_write(main_addr_dev, ADV7513_PWR_DWN, &adv7513_write_val, 1);
     if (result != 0)
     {
         print_str = "writing I2C";
@@ -325,14 +297,7 @@ int de10_nano_hdmi_config(int argc, char *const argv[])
     for (i = 0; i < 1000; i++)
     {
 
-#error "I2C here"
-        result = i2c_read_l(ADV7513_MAIN_ADDR,   // uint8_t chip
-                            0x00,                // unsigned int addr
-                            0,                   // int alen
-                            adv7513_read_buffer, // uint8_t *buffer
-                            ADV7513_EDID_RDY + 1 // int len
-        );
-
+		result = dm_i2c_read(main_addr_dev, 0x00, adv7513_read_buffer, ADV7513_EDID_RDY + 1);
         if (result != 0)
         {
             print_str = "reading I2C";
@@ -363,7 +328,6 @@ int de10_nano_hdmi_config(int argc, char *const argv[])
     milestones |= 0x01 << 8;
 
     result = dm_i2c_read(edid_addr_dev, 0x00, adv7513_edid_buffer, 256);
-
     if (result != 0)
     {
         print_str = "reading I2C";
@@ -823,14 +787,7 @@ post_EDID_evaluation:
     for (i = 0; i < (int)(sizeof(init_config_array) / sizeof(init_config)); i++)
     {
 
-#error "I2C here"
-        result = i2c_write_l(ADV7513_MAIN_ADDR,           // uint8_t chip
-                             init_config_array[i].addr,   // unsigned int addr
-                             1,                           // int alen
-                             &init_config_array[i].value, // uint8_t *buffer
-                             1                            // int len
-        );
-
+		result = dm_i2c_write(main_addr_dev, init_config_array[i].addr, &init_config_array[i].value, 1);
         if (result != 0)
         {
             print_str = "writing I2C";

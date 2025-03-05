@@ -7,7 +7,7 @@ extra-y        := hello_world
 extra-y        += de10_nano_hdmi_config
 # extra-y        += dump_adv7513_regs
 # extra-y        += dump_adv7513_edid
-extra-y        += i2c_test
+# extra-y        += i2c_test
 extra-$(CONFIG_SPI_FLASH_ATMEL)    += atmel_df_pow2
 extra-$(CONFIG_PPC)                += sched
 
