@@ -8,13 +8,8 @@
 
 #include "i2c_test.h"
 
-#if defined(CONFIG_CMD_I2C) && !CONFIG_IS_ENABLED(DM_I2C)
-#error "defined(CONFIG_CMD_I2C) && !CONFIG_IS_ENABLED(DM_I2C)"
-#endif
-
 int i2c_test(int argc, char *const argv[])
 {
-    struct udevice *bus;    // I2C controller device
     struct udevice *dev;    // I2C chip device
     uint8_t buffer[256];
     uint8_t chip_addr = ADV7513_MAIN_ADDR;  // Same I2C device address
@@ -39,26 +34,22 @@ int i2c_test(int argc, char *const argv[])
     }
     printf("\n");
 
-    // // Get I2C bus (assuming bus 0, adjust number as needed)
-    // ret = uclass_get_device_by_seq(UCLASS_I2C, 1, &bus);
-    // if (ret) {
-    //     printf("Cannot find I2C bus: %d\n", ret);
-    //     return ret;
-    // }
+    ret = i2c_get_chip_for_busnum(2, chip_addr, 1, &dev);
+    if (ret == -ENODEV) {
+        printf("Cannot find device on Bus 1 with offset 1");
+        return ret;
+    }
 
-    // // Probe the I2C chip device
-    // ret = dm_i2c_probe(bus, chip_addr, 0, &dev);
-    // if (ret) {
-    //     printf("Failed to probe I2C device: %d\n", ret);
-    //     return ret;
-    // }
+    // DM Read operation
+    ret = dm_i2c_read(dev, reg_addr, buffer, ADV7513_CHIP_ID_LO + 1);
+    if (ret) {
+        printf("DM read failed: %d\n", ret);
+        return ret;
+    }
 
-    // // DM Read operation
-    // ret = dm_i2c_read(dev, reg_addr, buffer, ADV7513_CHIP_ID_LO + 1);
-    // if (ret) {
-    //     printf("DM read failed: %d\n", ret);
-    //     return ret;
-    // }
+    for (int i = 0; i < ADV7513_CHIP_ID_LO + 1; i++) {
+        printf("buffer[%d] = %08x\n", i, buffer[i]);
+    }
 
     return 0;
 }

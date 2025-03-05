@@ -50,7 +50,22 @@
 	EXPORT_FUNC(dummy, void, i2c_write, void)
 	EXPORT_FUNC(dummy, void, i2c_read, void)
 #endif
+#if defined CONFIG_CMD_I2C && CONFIG_IS_ENABLED(DM_I2C)
+	EXPORT_FUNC(dm_i2c_read, int, dm_i2c_read, struct udevice*, uint, uint8_t*, int)
+	EXPORT_FUNC(dm_i2c_write, int, dm_i2c_write, struct udevice *, uint, const uint8_t*, int)
+	EXPORT_FUNC(dm_i2c_probe, int, dm_i2c_probe, struct udevice*, uint, uint, struct udevice **)
+	EXPORT_FUNC(i2c_deblock, int, i2c_deblock, struct udevice*)
+	EXPORT_FUNC(i2c_get_chip, int, i2c_get_chip, struct udevice*, uint, uint, struct udevice **)
+	EXPORT_FUNC(i2c_get_chip_for_busnum, int, i2c_get_chip_for_busnum, int, int, uint, struct udevice **)
 
+#else
+	EXPORT_FUNC(dummy, void, dm_i2c_read, void)
+	EXPORT_FUNC(dummy, void, dm_i2c_write, void)
+	EXPORT_FUNC(dummy, void, dm_i2c_probe, void)
+	EXPORT_FUNC(dummy, void, i2c_deblock, void)
+	EXPORT_FUNC(dummy, void, i2c_get_chip, void)
+	EXPORT_FUNC(dummy, void, i2c_get_chip_for_busnum, void)
+#endif
 #if !defined(CONFIG_CMD_SPI) || defined(CONFIG_DM_SPI)
 	EXPORT_FUNC(dummy, void, spi_setup_slave, void)
 	EXPORT_FUNC(dummy, void, spi_free_slave, void)
@@ -59,6 +74,7 @@
 		    unsigned int, unsigned int, unsigned int, unsigned int)
 	EXPORT_FUNC(spi_free_slave, void, spi_free_slave, struct spi_slave *)
 #endif
+
 #ifndef CONFIG_CMD_SPI
 	EXPORT_FUNC(dummy, void, spi_claim_bus, void)
 	EXPORT_FUNC(dummy, void, spi_release_bus, void)
