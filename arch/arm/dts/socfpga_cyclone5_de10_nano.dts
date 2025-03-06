@@ -113,6 +113,10 @@
 	bootph-all;
 };
 
+&uart1 {
+	clock-frequency = <100000000>;
+};
+
 &watchdog0 {
 	status = "disabled";
 };
