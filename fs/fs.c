@@ -526,7 +526,7 @@ int fs_size(const char *filename, loff_t *size)
 	return ret;
 }
 
-#ifdef CONFIG_LMB
+#if defined CONFIG_LMB && !CONFIG_OVERRIDE_FS_MLB
 /* Check if a file may be read to the given address */
 static int fs_read_lmb_check(const char *filename, ulong addr, loff_t offset,
 			     loff_t len, struct fstype_info *info)
@@ -568,7 +568,7 @@ static int _fs_read(const char *filename, ulong addr, loff_t offset, loff_t len,
 	void *buf;
 	int ret;
 
-#ifdef CONFIG_LMB
+#if defined CONFIG_LMB && !CONFIG_OVERRIDE_FS_MLB
 	if (do_lmb_check) {
 		ret = fs_read_lmb_check(filename, addr, offset, len, info);
 		if (ret)
@@ -756,6 +756,7 @@ int do_load(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[],
 
 	if (argc >= 4) {
 		addr = hextoul(argv[3], &ep);
+		log_debug("Address: %lx", addr);
 		if (ep == argv[3] || *ep != '\0')
 			return CMD_RET_USAGE;
 	} else {
@@ -765,6 +766,7 @@ int do_load(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[],
 		else
 			addr = CONFIG_SYS_LOAD_ADDR;
 	}
+
 	if (argc >= 5) {
 		filename = argv[4];
 	} else {
@@ -774,10 +776,12 @@ int do_load(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[],
 			return 1;
 		}
 	}
+
 	if (argc >= 6)
 		bytes = hextoul(argv[5], NULL);
 	else
 		bytes = 0;
+
 	if (argc >= 7)
 		pos = hextoul(argv[6], NULL);
 	else

@@ -1101,6 +1101,12 @@ config LMB
 	help
 	  Support the library logical memory blocks.
 
+config OVERRIDE_FS_MLB
+	bool "Override safegaurds for load to load a file to any address"
+	default n if LMB
+	help
+	  Disable enforcement of LMB in load 
+
 config LMB_USE_MAX_REGIONS
 	bool "Use a common number of memory and reserved regions in lmb lib"
 	default y

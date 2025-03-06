@@ -50,9 +50,9 @@
 			"run hdmi_fdt_mod; "\
 		"fi;\0"\
 	"hdmi_fdt_mod="\
-		"load mmc 0:1 ${fdt_addr_r} "\
+		"load mmc 0:1 ${fdt_addr} "\
 			"socfpga_cyclone5_de10_nano.dtb; "\
-		"fdt addr ${fdt_addr_r}; "\
+		"fdt addr ${fdt_addr}; "\
 		"fdt resize; "\
 		"fdt mknode /soc framebuffer@3F000000; "\
 		"setenv fdt_frag /soc/framebuffer@3F000000; "\
