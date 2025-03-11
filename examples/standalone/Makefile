@@ -5,6 +5,7 @@
 
 extra-y        := hello_world
 extra-y        += de10_nano_hdmi_config
+extra-y		   += de10_nano_cpuid_reg_cfg
 # extra-y        += dump_adv7513_regs
 # extra-y        += dump_adv7513_edid
 # extra-y        += i2c_test

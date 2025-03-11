@@ -34,7 +34,6 @@
 	"pxefile_addr_r=0x02200000\0" \
 	"ramdisk_addr_r=0x02300000\0" \
     "socfpga_legacy_reset_compat=1\0" \
-	"ethaddr=e6:e2:1b:3c:22:e8\0" \
 	"prog_core=if load mmc 0:1 ${loadaddr} fit_spl_fpga.itb;" \
 		"then fpga loadmk 0 ${loadaddr}:fpga-core-1; fi\0" \
 	"fpga_cfg=" \
@@ -88,11 +87,15 @@
 		"load mmc 0:1 0x0c100000 dump_adv7513_edid.bin; "\
 		"go 0x0C100001; "\
 		"icache flush;\0"\
+	"cpuid_reg_cfg="\
+		"load mmc 0:1 0x0c100000 de10_nano_cpuid_reg_cfg.bin; " \
+		"go 0x0c100001; " \
+		"icache flush;\0" \
 	BOOTENV
 
 #endif
 
-#define CONFIG_BOOTCOMMAND "run fatscript; run fpga_cfg; run hdmi_init; run distro_bootcmd"
+#define CONFIG_BOOTCOMMAND "run fatscript; run fpga_cfg; run hdmi_init; run cpuid_reg_cfg; run distro_bootcmd"
 
 /* The rest of the configuration is shared */
 #include <configs/socfpga_common.h>
