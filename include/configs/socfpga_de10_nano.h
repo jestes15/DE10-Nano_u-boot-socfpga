@@ -95,7 +95,7 @@
 
 #endif
 
-#define CONFIG_BOOTCOMMAND "run fatscript; run fpga_cfg; run hdmi_init; run cpuid_reg_cfg; run distro_bootcmd"
+#define CONFIG_BOOTCOMMAND "run fatscript; run fpga_cfg; run cpuid_reg_cfg; run hdmi_init; run distro_bootcmd"
 
 /* The rest of the configuration is shared */
 #include <configs/socfpga_common.h>
