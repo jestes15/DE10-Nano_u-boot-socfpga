@@ -88,9 +88,11 @@
 		"go 0x0C100001; "\
 		"icache flush;\0"\
 	"cpuid_reg_cfg="\
-		"load mmc 0:1 0x0c100000 de10_nano_cpuid_reg_cfg.bin; " \
-		"go 0x0c100001; " \
-		"icache flush;\0" \
+		"if test -e mmc 0:1 de10_nano_cpuid_reg_cfg.bin; then " \
+			"load mmc 0:1 0x0c100000 de10_nano_cpuid_reg_cfg.bin; " \
+			"go 0x0c100001; " \
+			"icache flush;" \
+		"fi;\0" \
 	BOOTENV
 
 #endif
