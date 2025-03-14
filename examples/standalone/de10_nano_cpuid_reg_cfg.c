@@ -92,7 +92,8 @@ int de10_nano_cpuid_reg_cfg(int argc, char *const argv[]) {
 	IOWR_32DIRECT(lwcpuidbridge_base, CCSIDR_BASE, cpuid_reg_data.ccsidr);
 	IOWR_32DIRECT(lwcpuidbridge_base, CLIDR_BASE, cpuid_reg_data.clidr);
 	IOWR_32DIRECT(lwcpuidbridge_base, AIDR_BASE, cpuid_reg_data.aidr);
-	IOWR_32DIRECT(lwcpuidbridge_base, CSSELR_BASE, cpuid_reg_data.csselr);e("MRC p15, 0, %0, c0, c0, 3" : "=r"(cpuid_reg_data.tlbtr));
+	IOWR_32DIRECT(lwcpuidbridge_base, CSSELR_BASE, cpuid_reg_data.csselr);
+	asm volatile("MRC p15, 0, %0, c0, c0, 3" : "=r"(cpuid_reg_data.tlbtr));
 	printf("cpuid_reg_data.tlbtr: %08x\n", cpuid_reg_data.tlbtr);
 	asm volatile("MRC p15, 0, %0, c0, c0, 5" : "=r"(cpuid_reg_data.mpidr));
 	printf("cpuid_reg_data.mpidr: %08x\n", cpuid_reg_data.mpidr);
